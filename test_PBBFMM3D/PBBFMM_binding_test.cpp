@@ -1,8 +1,6 @@
 <%
-cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-O3', '-L', '$(MKLROOT)/lib/intel64', '-fopenmp']
-cfg['linker_args'] = ['-I', '$(MKLROOT)/include', '-L', '$(MKLROOT)/lib/intel64', '-L/', '-L', '/usr/lib', '-L', '/usr/include', '-I', '../PBBFMM3D/include']
-cfg['librairies'] = ['-L', '/usr/local/lib', '-lfftw3', '-Wl', '--start-group', '${MKLROOT}/lib/intel64/libmkl_intel_lp64.a', '${MKLROOT}/lib/intel64/libmkl_sequential.a', '${MKLROOT}/lib/intel64/libmkl_core.a', '-Wl', '--end-group', '-lpthread', '-lm', '-ldl', '-fopenmp']
-cfg['include_dirs'] = ['../PBBFMM3D/include', '/usr/local/include', '$(MKLROOT)/include', '/usr/include']
+cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-O3', '-I', '$(MKLROOT)/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-I', '../PBBFMM3D/include', '-I', '/usr/include', '-I', '/usr/local/include', '-fopenmp']
+cfg['linker_args'] = ['-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-L/', '-L', '/usr/lib', '-I', '/usr/include', '-I', '../PBBFMM3D/include', '-L', '/usr/local/lib', '-lfftw3', '-Wl,--start-group', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_intel_lp64.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_sequential.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_core.a', '-Wl,--end-group', '-lpthread', '-lm', '-ldl', '-fopenmp']
 cfg['sources'] = ['../PBBFMM3D/src/H2_3D_Tree.cpp', '../PBBFMM3D/src/kernel_Types.cpp']
 setup_pybind11(cfg)
 %>
@@ -58,7 +56,7 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
 
     int nCols = 1; //always one set of charges
     int use_chebyshev = 1; //use Chebyshev interpolation scheme
-    const double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
+    double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
     
     //Pybind11 buffers
     py::buffer_info loc = locations.request();
@@ -72,12 +70,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     chargesSet(weights, N, charges);
     
+    loc2vector(locations, N, source, target);
+    
     std::vector<double> output(N*nCols);   // output array (BBFMM calculation)    
     
     for (int i = 0; i < N*nCols; i++)
         output[i] = 0;                          //do we need to initialize?
         
-    
      /**********************************************************/
     /*                                                        */
     /*                 Fast matrix vector product             */
@@ -104,13 +103,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     //Clean memory
     
-    target.clear();
-    source.clear();
-    charges.clear();
+    //target.clear();
+    //source.clear();
+    //charges.clear();
     
-    target.shrink_to_fit();
-    source.shrink_to_fit();
-    charges.shrink_to_fit();
+    //target.shrink_to_fit();
+    //source.shrink_to_fit();
+    //charges.shrink_to_fit();
     
     return Qh;
 }

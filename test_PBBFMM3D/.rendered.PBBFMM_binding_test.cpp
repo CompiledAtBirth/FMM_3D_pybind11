@@ -1,7 +1,6 @@
 
 
 
-//cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-DNDEBUG', '-O3', '-fopenmp', '-I', '$(MKLROOT)/include', '-L', '$(MKLROOT)/lib/intel64', '-L', '/usr/lib', '-I', '/usr/include', '-L', '/usr/local/lib']
 //path to pybind11/include needed in cfg['include_dirs'] if it is not contained in the CPATH environment variable
 
 #define _USE_MATH_DEFINES
@@ -52,7 +51,7 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
 
     int nCols = 1; //always one set of charges
     int use_chebyshev = 1; //use Chebyshev interpolation scheme
-    const double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
+    double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
     
     //Pybind11 buffers
     py::buffer_info loc = locations.request();
@@ -66,12 +65,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     chargesSet(weights, N, charges);
     
+    loc2vector(locations, N, source, target);
+    
     std::vector<double> output(N*nCols);   // output array (BBFMM calculation)    
     
     for (int i = 0; i < N*nCols; i++)
         output[i] = 0;                          //do we need to initialize?
         
-    
      /**********************************************************/
     /*                                                        */
     /*                 Fast matrix vector product             */
@@ -98,13 +98,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     //Clean memory
     
-    target.clear();
-    source.clear();
-    charges.clear();
+    //target.clear();
+    //source.clear();
+    //charges.clear();
     
-    target.shrink_to_fit();
-    source.shrink_to_fit();
-    charges.shrink_to_fit();
+    //target.shrink_to_fit();
+    //source.shrink_to_fit();
+    //charges.shrink_to_fit();
     
     return Qh;
 }
