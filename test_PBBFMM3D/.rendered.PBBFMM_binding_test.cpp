@@ -13,6 +13,17 @@
 
 namespace py = pybind11;
 
+//The request method of a pybind11::array returns:
+//struct buffer_info {
+//    void *ptr;
+//    size_t itemsize;
+//    std::string format;
+//    int ndim;
+//    std::vector<size_t> shape;
+//    std::vector<size_t> strides;
+//};
+
+
 void loc2vector(py::array_t<double, py::array::c_style | py::array::forcecast> locations, int N, std::vector<vector3>& source, std::vector<vector3>& target){
 
     py::buffer_info loc = locations.request();
@@ -98,13 +109,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     //Clean memory
     
-    //target.clear();
-    //source.clear();
-    //charges.clear();
+    target.clear();
+    source.clear();
+    charges.clear();
     
-    //target.shrink_to_fit();
-    //source.shrink_to_fit();
-    //charges.shrink_to_fit();
+    target.shrink_to_fit();
+    source.shrink_to_fit();
+    charges.shrink_to_fit();
     
     return Qh;
 }

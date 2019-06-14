@@ -1,7 +1,10 @@
 <%
-cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-O3', '-I', '$(MKLROOT)/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-I', '../PBBFMM3D/include', '-I', '/usr/include', '-I', '/usr/local/include', '-fopenmp']
+cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-O3', '-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-I', '../PBBFMM3D/include', '-I', '/usr/include', '-I', '/usr/local/include', '-fopenmp']
+
 cfg['linker_args'] = ['-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-L/', '-L', '/usr/lib', '-I', '/usr/include', '-I', '../PBBFMM3D/include', '-L', '/usr/local/lib', '-lfftw3', '-Wl,--start-group', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_intel_lp64.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_sequential.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_core.a', '-Wl,--end-group', '-lpthread', '-lm', '-ldl', '-fopenmp']
+
 cfg['sources'] = ['../PBBFMM3D/src/H2_3D_Tree.cpp', '../PBBFMM3D/src/kernel_Types.cpp']
+
 setup_pybind11(cfg)
 %>
 
@@ -17,6 +20,17 @@ setup_pybind11(cfg)
 #include <cmath>
 
 namespace py = pybind11;
+
+//The request method of a pybind11::array returns:
+//struct buffer_info {
+//    void *ptr;
+//    size_t itemsize;
+//    std::string format;
+//    int ndim;
+//    std::vector<size_t> shape;
+//    std::vector<size_t> strides;
+//};
+
 
 void loc2vector(py::array_t<double, py::array::c_style | py::array::forcecast> locations, int N, std::vector<vector3>& source, std::vector<vector3>& target){
 
@@ -103,13 +117,13 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     //Clean memory
     
-    //target.clear();
-    //source.clear();
-    //charges.clear();
+    target.clear();
+    source.clear();
+    charges.clear();
     
-    //target.shrink_to_fit();
-    //source.shrink_to_fit();
-    //charges.shrink_to_fit();
+    target.shrink_to_fit();
+    source.shrink_to_fit();
+    charges.shrink_to_fit();
     
     return Qh;
 }
