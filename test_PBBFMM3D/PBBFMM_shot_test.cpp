@@ -7,13 +7,15 @@
 
 void split(const string& s, char* del, std::vector<vector3>& source, std::vector<vector3>& target){
     
-    int j = s.find(del);
-    int k = s.find(del,j);
+    size_t i = 0;
+    size_t j = s.find(del);
     vector3 v;
     
     v.x = atof(s.substr(0, j).c_str()); //c_str() turns string into char*
-    v.y = atof(s.substr(j+1, k).c_str());
-    v.z = atof(s.substr(k+1,s.length()).c_str());
+    i = ++j;
+    j = s.find(del, j);
+    v.y = atof(s.substr(i, j-i).c_str());
+    v.z = atof(s.substr(j+1, s.length()-j-1).c_str());
     
     source.push_back(v);
     target.push_back(v);
@@ -46,21 +48,42 @@ int main(){
     
     int use_chebyshev = 1; //use Chebyshev interpolation scheme
     double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
+    std::cout << "L = " << L << std::endl;
     int nCols = 1;
     int interpolation_order = 5;
-    int tree_level = 5;
-    double eps = 1.0e-5;
+    int tree_level = 6;
+    double eps = 1e-5;
     
     std::vector<vector3> source;
     std::vector<vector3> target;
     
     int N = txt2Vec(filename, del, source, target);
-    std::cout << source[0].x << std::endl;
-    std::cout << source[0].y << std::endl;
-    std::cout << source[0].z << std::endl;
+    
+    ////////////////DEBUG////////////////
+    
+    const char* castname;
+    castname = "../data/castedSourceDirect_radialIO3434.txt";
+    
+    ofstream castfile;
+    castfile.open(castname);
+    
+    for(int n = 0; n < N*nCols ; n++){
+    
+        castfile << source[n].x;
+        castfile << "," << source[n].y << "," << source[n].z ;
+        if(n != N-1){
+            castfile << '\n';
+        }
+    }
+    castfile.close();
+    
+    //std::cout << source[0].x << std::endl;
+    //std::cout << source[0].y << std::endl;
+    //std::cout << source[0].z << std::endl;
+    
     std::vector<double> charges(N*nCols);
     
-    for(int k = 0 ; k < N ; k++){    
+    for(int k = 0 ; k < N*nCols ; k++){    
         charges[k] = 1.0;
     }
     
@@ -81,6 +104,8 @@ int main(){
     
     /*****      FMM Computation     *******/  
     H2_3D_Compute<kernel_Laplacian> compute(Atree, target, source, charges, nCols, output);
+    
+    std::cout << "output[0] = " << output[0] <<std::endl;
     
     //write potentials into text file
     

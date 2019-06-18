@@ -1,9 +1,9 @@
 <%
-cfg['compiler_args'] = ['-std=c++11', '-c', '-Wall', '-O3', '-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-I', '../PBBFMM3D/include', '-I', '/usr/include', '-I', '/usr/local/include', '-fopenmp']
+cfg['compiler_args'] = ['-c', '-Wall', '-O3', '-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-I', '../PBBFMM3D/include', '-I', '/usr/include', '-I', '/usr/local/include', '-fopenmp']
 
 cfg['linker_args'] = ['-I', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/include', '-L', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64', '-L/', '-L', '/usr/lib', '-I', '/usr/include', '-I', '../PBBFMM3D/include', '-L', '/usr/local/lib', '-lfftw3', '-Wl,--start-group', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_intel_lp64.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_sequential.a', '/home/nc258476/intel/compilers_and_libraries_2019.1.144/linux/mkl/lib/intel64/libmkl_core.a', '-Wl,--end-group', '-lpthread', '-lm', '-ldl', '-fopenmp']
 
-cfg['sources'] = ['../PBBFMM3D/src/H2_3D_Tree.cpp', '../PBBFMM3D/src/kernel_Types.cpp']
+cfg['sources'] = ['../PBBFMM3D/src/H2_3D_Tree.cpp', '../PBBFMM3D/src/kernel_Types.cpp', '../PBBFMM3D/src/read_metadata.cpp', '../PBBFMM3D/src/read_sources.cpp', '../PBBFMM3D/src/write_Into_Binary_File.cpp']
 
 setup_pybind11(cfg)
 %>
@@ -66,11 +66,13 @@ void chargesSet(py::array_t<double, py::array::c_style | py::array::forcecast> w
 
 }
 
+//MAIN FUNCTION -> MODULE
 py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::array_t<double, py::array::c_style | py::array::forcecast> locations, py::array_t<double, py::array::c_style | py::array::forcecast> weights, int interpolation_order, int tree_level, double eps){
 
     int nCols = 1; //always one set of charges
     int use_chebyshev = 1; //use Chebyshev interpolation scheme
     double L = 1.0/M_PI; //kspace samples live in [-1/(2pi), 1/(2pi)]^3
+    std::cout << "L = " << L << std::endl;
     
     //Pybind11 buffers
     py::buffer_info loc = locations.request();
@@ -84,9 +86,47 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     
     chargesSet(weights, N, charges);
     
+    //std::cout<<"Sum of all charges is :"<<std::endl;
+    //std::cout<< std::accumulate(charges.begin(),charges.end(),0) << std::endl;
+    
     loc2vector(locations, N, source, target);
     
-    std::vector<double> output(N*nCols);   // output array (BBFMM calculation)    
+    ///////////DEBUG///////////////
+    
+    //std::cout << "target0 x = " << target[0].x << std::endl;
+    //std::cout << "target0 y = " << target[0].y << std::endl;
+    //std::cout << "target0 z = " << target[0].z << std::endl;
+    
+    //std::cout << "source0 x = " << source[0].x << std::endl;
+    //std::cout << "source0 y = " << source[0].y << std::endl;
+    //std::cout << "source0 z = " << source[0].z << std::endl;
+    
+    //std::cout << "target1 x = " << target[1].x << std::endl;
+    //std::cout << "target1 y = " << target[1].y << std::endl;
+    //std::cout << "target1 z = " << target[1].z << std::endl;
+    
+    //std::cout << "source1 x = " << source[1].x << std::endl;
+    //std::cout << "source1 y = " << source[1].y << std::endl;
+    //std::cout << "source1 z = " << source[1].z << std::endl;
+    
+    //const char* outname;
+    //outname = "../data/castedTarget_radialIO3434.txt";
+    
+    //ofstream outfile;
+    //outfile.open(outname);
+    
+    //for(int n = 0; n < N*nCols ; n++){
+    
+    //    outfile << target[n].x;
+    //    outfile << "," << target[n].y << "," << target[n].z ;
+    //    if(n != N-1){
+    //        outfile << '\n';
+    //    }
+    //}
+    //outfile.close();
+    //////////////////////////////////////
+    
+    std::vector<double> output(N*nCols);   // output array (PBBFMM calculation)    
     
     for (int i = 0; i < N*nCols; i++)
         output[i] = 0;                          //do we need to initialize?
@@ -104,6 +144,8 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     /*****      FMM Computation     *******/  
     H2_3D_Compute<kernel_Laplacian> compute(Atree, target, source, charges, nCols, output);
     
+    std::cout << "output[0] = " << output[0] << " (binding)"<< std::endl;
+    
     //output tunrned into py::array_t
     
     py::array_t<double, py::array::c_style | py::array::forcecast> Qh({N, nCols});
@@ -111,7 +153,6 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     double *ptrOut = (double *) out.ptr;
     
     for(int j = 0 ; j < N*nCols ; j++){
-    
         ptrOut[j] = output[j];
     }
     
