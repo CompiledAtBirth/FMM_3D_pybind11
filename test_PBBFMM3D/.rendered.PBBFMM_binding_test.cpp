@@ -24,6 +24,7 @@ namespace py = pybind11;
 //};
 
 
+//Converts input file into vector of custom vector3 type ; the "c_style" protection ensures row-major packing
 void loc2vector(py::array_t<double, py::array::c_style | py::array::forcecast> locations, int N, std::vector<vector3>& source, std::vector<vector3>& target){
 
     py::buffer_info loc = locations.request();
@@ -92,14 +93,6 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     //std::cout << "source0 x = " << source[0].x << std::endl;
     //std::cout << "source0 y = " << source[0].y << std::endl;
     //std::cout << "source0 z = " << source[0].z << std::endl;
-    
-    //std::cout << "target1 x = " << target[1].x << std::endl;
-    //std::cout << "target1 y = " << target[1].y << std::endl;
-    //std::cout << "target1 z = " << target[1].z << std::endl;
-    
-    //std::cout << "source1 x = " << source[1].x << std::endl;
-    //std::cout << "source1 y = " << source[1].y << std::endl;
-    //std::cout << "source1 z = " << source[1].z << std::endl;
     
     //const char* outname;
     //outname = "../data/castedTarget_radialIO3434.txt";

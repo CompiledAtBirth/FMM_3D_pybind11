@@ -77,9 +77,7 @@ int main(){
     }
     castfile.close();
     
-    //std::cout << source[0].x << std::endl;
-    //std::cout << source[0].y << std::endl;
-    //std::cout << source[0].z << std::endl;
+    //Unitary set of charges for testing
     
     std::vector<double> charges(N*nCols);
     

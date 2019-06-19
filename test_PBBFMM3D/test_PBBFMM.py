@@ -4,23 +4,23 @@ from mpl_toolkits.mplot3d import Axes3D
 import cppimport
 
 #%%  QH calculated with pybind11 & PBBFMM3D
-shot = np.loadtxt("../data/radialIO3D_3434.txt", delimiter = ',')
+shot = np.loadtxt("../data/radialIO3D_3434.txt", delimiter = ',', dtype = np.float64)
 
 pfmm = cppimport.imp("PBBFMM_binding_test")
 
 interpolation_order = 5 #Number of Chebyshev nodes for interpolations (between 3 and 10)
-tree_depth = 6
-eps = 1e-5
-H = np.ones(shot.shape[0]) #set of unitary charges
-Qh = pfmm.pbbfmm_3D(shot.T, H, interpolation_order, tree_depth, eps) ##bbfmm_2D takes 2*N arrays
-np.savetxt("Qh_radialIO3434_binding.txt", Qh, delimiter = ",")
+tree_depth = 6 #in PBBFMM3D, the user controls the tree depth
+eps = 1e-5 #target precision for compressed M2L operator
+H = np.ones(shot.shape[0]) #set of unitary charges for testing
+Qh = pfmm.pbbfmm_3D(shot.T, H, interpolation_order, tree_depth, eps) ##pbbfmm_3D takes 3*N arrays
+np.savetxt("../data/Qh_radialIO3434_binding.txt", Qh, delimiter = ",")
 
 fig2 = plt.figure()
 plt.plot(Qh[:,0], linewidth = 0.2)
 plt.title("Qh product with pybind11 and PBBFMM3D")
 plt.show()
 
-#%% Qh calculated "directly" in PBBFMM3D
+#%% QH calculated "directly" in PBBFMM3D
 Qh_bb = np.loadtxt("../data/QH_radialIO3434_pbbfmm.txt")
 
 fig3 = plt.figure()
@@ -31,24 +31,25 @@ plt.title("QH product, PBBFMM3D directly")
 plt.title("First QH product, bbfmm no binding")
 plt.show()
 
+#%% Some figures to diplay calculation differences
 diffQh = Qh[:,0] - Qh_bb
 ratioQh = 100*diffQh/Qh_bb
 
 fig4 = plt.figure()
 plt.plot(diffQh, linewidth = 0.4)
-plt.title("Difference between PBBFMM calculation and calcutation with pybind11")
+plt.title("Difference between PBBFMM calculation and calculation with pybind11")
 plt.show()
 
 fig5 = plt.figure()
 plt.plot(ratioQh, linewidth = 0.4)
-plt.title("Relative error betwwen direct pbbfmm calculation and pybind11")
+plt.title("Relative error betwwen PBBFMM calculation and pybind11+PBBFMM3D")
 plt.ylabel("Relative error in %", fontsize = 18)
 plt.show()
-#%% Checking if anything happens in the casting
-castedSourceDirect = np.loadtxt("../data/castedSourceDirect_radialIO3434.txt", delimiter = ",")
+#%% Checking if anything happens in the casting of the vector in the C++ script
+castedSourceDirect = np.loadtxt("../data/castedSourceDirect_radialIO3434.txt", delimiter = ",", dtype = np.float64)
 
 
-#%% Display shot (computationally heavy)
+#%% Display shot (computationally heavy) for visual check
 
 #fig = plt.figure()
 #ax = fig.gca(projection = "3d")
