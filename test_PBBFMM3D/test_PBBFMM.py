@@ -19,7 +19,7 @@ fig2 = plt.figure()
 plt.plot(Qh[:,0], linewidth = 0.2)
 plt.title("QH product with pybind11 and PBBFMM3D")
 plt.show()
-plt.savefig("../Results/QH_radial3D_pybind11.png")
+
 
 #%% QH calculated "directly" in PBBFMM3D
 Qh_bb = np.loadtxt("../data/QH_radial3D_pbbfmm.txt")
@@ -31,7 +31,7 @@ plt.ylabel("Potential", fontsize = 18)
 plt.title("QH product, PBBFMM3D directly")
 plt.title("First QH product with PBBFMM, no binding")
 plt.show()
-plt.savefig("../Results/QH_radial3D_noBinding.png")
+
 
 #%% Some figures to diplay calculation differences
 diffQh = Qh[:,0] - Qh_bb
@@ -41,14 +41,14 @@ fig4 = plt.figure()
 plt.plot(diffQh, linewidth = 0.4)
 plt.title("Difference between PBBFMM and PBBFMM + pybind11")
 plt.show()
-plt.savefig("../Results/QH_radial3D_difference.png")
+#plt.savefig("../Results/QH_radial3D_difference.png")
 
 fig5 = plt.figure()
 plt.plot(ratioQh, linewidth = 0.4)
 plt.title("Relative error betwwen PBBFMM and pybind11 + PBBFMM3D")
 plt.ylabel("Relative error in %", fontsize = 18)
 plt.show()
-plt.savefig("../Results/QH_radial3D_relativeError.png")
+
 #%% Checking if anything happens in the casting of the vector in the C++ script
 castedSourceDirect = np.loadtxt("../data/castedSourceDirect_radial3D.txt", delimiter = ",", dtype = np.float64)
 
