@@ -7,6 +7,7 @@ The black-box FMM originates from W.Fong & E.Darve (2009).
 
 - [pybind11](https://github.com/pybind/pybind11) : You either need to have the path/to/pybind11/include in your CPATH environment variable, or to include it manually in the code.
 - [cppimport](https://github.com/tbenthompson/cppimport) : I use it, but it is not the only solution to compile the wrappers into standard (C)Python extension modules. See pybind11 documentation.
+- Intel Math Kernel Library (MKL)
 
 ## Usage
 
@@ -36,3 +37,9 @@ The output is referred as the QH product, with Q the kernel matrix and H the set
 ### Results
 
 Some plots are saved here (comparison between the outputs)
+
+## Important Remarks
+
+-  The output folder needs to be exactly is this place with this name, if not a segmentation fault will occur (hard coded in PBBFMM3D module). It contains the precompute files for a given kernel and interpolation order.
+
+- I did not manage to get the $(MKLROOT) working with cppimport, so I wrote the path manually in the compiler and linker arguments (PBBFMM_binding_test.cpp).
