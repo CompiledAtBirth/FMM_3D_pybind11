@@ -43,7 +43,7 @@ int txt2Vec(const char* filename, char* del, std::vector<vector3>& source, std::
 int main(){
     
     const char* filename;
-    filename = "../data/radialIO3D_3434.txt";
+    filename = "../data/distribution_radial3D.txt";
     char del[] = ",";
     
     int use_chebyshev = 1; //use Chebyshev interpolation scheme
@@ -62,7 +62,7 @@ int main(){
     ////////////////DEBUG////////////////
     
     const char* castname;
-    castname = "../data/castedSourceDirect_radialIO3434.txt";
+    castname = "../data/castedSourceDirect_radial3D.txt";
     
     ofstream castfile;
     castfile.open(castname);
@@ -108,7 +108,7 @@ int main(){
     //write potentials into text file
     
     const char* outname;
-    outname = "../data/QH_radialIO3434_pbbfmm.txt";
+    outname = "../data/QH_radial3D_pbbfmm.txt";
     
     ofstream outfile;
     outfile.open(outname);

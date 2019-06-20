@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import cppimport
 
 #%%  QH calculated with pybind11 & PBBFMM3D
-shot = np.loadtxt("../data/radialIO3D_3434.txt", delimiter = ',', dtype = np.float64)
+shot = np.loadtxt("../data/distribution_radial3D.txt", delimiter = ',', dtype = np.float64)
 
 pfmm = cppimport.imp("PBBFMM_binding_test")
 
@@ -13,23 +13,25 @@ tree_depth = 6 #in PBBFMM3D, the user controls the tree depth
 eps = 1e-5 #target precision for compressed M2L operator
 H = np.ones(shot.shape[0]) #set of unitary charges for testing
 Qh = pfmm.pbbfmm_3D(shot.T, H, interpolation_order, tree_depth, eps) ##pbbfmm_3D takes 3*N arrays
-np.savetxt("../data/Qh_radialIO3434_binding.txt", Qh, delimiter = ",")
+np.savetxt("../data/QH_radial3D_binding.txt", Qh, delimiter = ",")
 
 fig2 = plt.figure()
 plt.plot(Qh[:,0], linewidth = 0.2)
-plt.title("Qh product with pybind11 and PBBFMM3D")
+plt.title("QH product with pybind11 and PBBFMM3D")
 plt.show()
+plt.savefig("../Results/QH_radial3D_pybind11.png")
 
 #%% QH calculated "directly" in PBBFMM3D
-Qh_bb = np.loadtxt("../data/QH_radialIO3434_pbbfmm.txt")
+Qh_bb = np.loadtxt("../data/QH_radial3D_pbbfmm.txt")
 
 fig3 = plt.figure()
 plt.plot(Qh_bb, linewidth = 0.2)
 plt.xlabel("Particles indices", fontsize = 18)
 plt.ylabel("Potential", fontsize = 18)
 plt.title("QH product, PBBFMM3D directly")
-plt.title("First QH product, bbfmm no binding")
+plt.title("First QH product with PBBFMM, no binding")
 plt.show()
+plt.savefig("../Results/QH_radial3D_noBinding.png")
 
 #%% Some figures to diplay calculation differences
 diffQh = Qh[:,0] - Qh_bb
@@ -37,17 +39,18 @@ ratioQh = 100*diffQh/Qh_bb
 
 fig4 = plt.figure()
 plt.plot(diffQh, linewidth = 0.4)
-plt.title("Difference between PBBFMM calculation and calculation with pybind11")
+plt.title("Difference between PBBFMM and PBBFMM + pybind11")
 plt.show()
+plt.savefig("../Results/QH_radial3D_difference.png")
 
 fig5 = plt.figure()
 plt.plot(ratioQh, linewidth = 0.4)
-plt.title("Relative error betwwen PBBFMM calculation and pybind11+PBBFMM3D")
+plt.title("Relative error betwwen PBBFMM and pybind11 + PBBFMM3D")
 plt.ylabel("Relative error in %", fontsize = 18)
 plt.show()
+plt.savefig("../Results/QH_radial3D_relativeError.png")
 #%% Checking if anything happens in the casting of the vector in the C++ script
-castedSourceDirect = np.loadtxt("../data/castedSourceDirect_radialIO3434.txt", delimiter = ",", dtype = np.float64)
-
+castedSourceDirect = np.loadtxt("../data/castedSourceDirect_radial3D.txt", delimiter = ",", dtype = np.float64)
 
 #%% Display shot (computationally heavy) for visual check
 

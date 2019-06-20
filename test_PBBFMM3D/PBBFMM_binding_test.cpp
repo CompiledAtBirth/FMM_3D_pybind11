@@ -103,7 +103,7 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     //std::cout << "source0 z = " << source[0].z << std::endl;
     
     //const char* outname;
-    //outname = "../data/castedTarget_radialIO3434.txt";
+    //outname = "../data/castedTargetBinding_radial3D.txt";
     
     //ofstream outfile;
     //outfile.open(outname);
