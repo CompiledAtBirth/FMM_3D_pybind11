@@ -98,10 +98,6 @@ py::array_t<double, py::array::c_style | py::array::forcecast> pbbfmm_3D(py::arr
     //std::cout << "target0 y = " << target[0].y << std::endl;
     //std::cout << "target0 z = " << target[0].z << std::endl;
     
-    //std::cout << "source0 x = " << source[0].x << std::endl;
-    //std::cout << "source0 y = " << source[0].y << std::endl;
-    //std::cout << "source0 z = " << source[0].z << std::endl;
-    
     //const char* outname;
     //outname = "../data/castedTargetBinding_radial3D.txt";
     

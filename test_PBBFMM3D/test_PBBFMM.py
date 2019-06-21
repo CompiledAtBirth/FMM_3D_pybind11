@@ -29,7 +29,6 @@ plt.plot(Qh_bb, linewidth = 0.2)
 plt.xlabel("Particles indices", fontsize = 18)
 plt.ylabel("Potential", fontsize = 18)
 plt.title("QH product, PBBFMM3D directly")
-plt.title("First QH product with PBBFMM, no binding")
 plt.show()
 
 
