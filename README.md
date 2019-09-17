@@ -31,8 +31,8 @@ The output is referred as the QH product, with Q the kernel matrix and H the set
 
 ### test_PBBFMM3D
 
-  - PBBFMM_shot_test.cpp : source script to calculate the QH product directly with the PBBFMM3D submodule and a given distribution of particles
-  - PBBFMM_binding_test.cpp and test_PBBFMM.py : pybind11 wrapper and python tests script, the distribution of particles being a (N,3) numpy array from an other Python application
+  - *PBBFMM_shot_test.cpp* : source script to calculate the QH product directly with the PBBFMM3D submodule and a given distribution of particles
+  - *PBBFMM_binding_test.cpp* and *test_PBBFMM.py* : pybind11 wrapper and python tests script, the distribution of particles being a (N,3) numpy array from an other Python application
   
 ### Results
 
@@ -40,6 +40,6 @@ Some plots are saved here (comparison between the outputs)
 
 ## Important Remarks
 
--  The output folder needs to be exactly is this place with this name, if not a segmentation fault will occur (hard coded in PBBFMM3D module). It contains the precompute files for a given kernel and interpolation order.
+-  The *output* folder needs to be exactly is this place with this name ; if not, a segmentation fault will occur (hard coded path in PBBFMM3D module). It contains the precomputed files for a given kernel and interpolation order.
 
 - I did not manage to get the $(MKLROOT) working with cppimport, so I wrote the path manually in the compiler and linker arguments (PBBFMM_binding_test.cpp).
