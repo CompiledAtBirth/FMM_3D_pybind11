@@ -31,7 +31,7 @@ The output is referred as the QH product, with Q the kernel matrix and H the set
 
 ### test_PBBFMM3D
 
-  - PBBFMM_shot_test : source script to calculate the QH product directly with the PBBFMM3D submodule and a given distribution of particles
+  - PBBFMM_shot_test.cpp : source script to calculate the QH product directly with the PBBFMM3D submodule and a given distribution of particles
   - PBBFMM_binding_test.cpp and test_PBBFMM.py : pybind11 wrapper and python tests script, the distribution of particles being a (N,3) numpy array from an other Python application
   
 ### Results
