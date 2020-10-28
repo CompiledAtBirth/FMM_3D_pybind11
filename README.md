@@ -1,7 +1,7 @@
 # FMM_3D_pybind11
 
 A repository providing an example of pybind11 usage with the 3D Black-box Fast Multipole Method (https://github.com/ruoxi-wang/PBBFMM3D).
-The black-box FMM originates from W.Fong & E.Darve (2009).
+The black-box FMM originates from [W.Fong & E.Darve (2009)](https://mc.stanford.edu/cgi-bin/images/f/fa/Darve_bbfmm_2009.pdf).
 
 ## Requirements
 
@@ -20,14 +20,14 @@ cd exec
 ```
 and the latter with `python3 test_PBBFMM.py` in the tests_PBBFMM repository.
 
-The output is referred as the QH product, with Q the kernel matrix and H the set(s) of charges (one unitary set here for testing purposes).
+The output is referred as the QH product, with Q the kernel matrix and H the set(s) of charges (single set ofunitary charges here for testing purposes).
 
 ## Files description
 
 ### data
 - distribution_radial3D.txt is a presaved distributions of particles.
-- The "casted source" file is just the distriubtion read in C++ and immediately written again as an output to inspect float/double consistency in the wrapper.
--  The QH files are the outputs of the FMM (in C++ and in Python with pybind11)
+- The "casted source" file is just the distribution read in C++ and immediately written again as an output to inspect float/double consistency in the wrapper.
+- The QH files are the outputs of the FMM (in C++ and in Python with pybind11)
 
 ### test_PBBFMM3D
 
@@ -36,7 +36,7 @@ The output is referred as the QH product, with Q the kernel matrix and H the set
   
 ### Results
 
-Some plots are saved here (comparison between the outputs)
+Some plots are saved here (comparison between the outputs).
 
 ## Important Remarks
 
